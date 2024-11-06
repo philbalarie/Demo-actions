@@ -15,6 +15,7 @@ jobs:
             - name: Build
               run: npm run build
     test: 
+        needs: build
         runs-on: ubuntu-latest
         steps:
             - name: Get code from repository
