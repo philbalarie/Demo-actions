@@ -4,10 +4,21 @@ jobs:
     buildTest:
         runs-on: ubuntu-latest
         steps:
-            - name: install
-              run: npm install
-            - name: build
-              run: npm run build
-            - name: test
-              run: npm run test  
+            - name: Get code from repository
+              uses: actions/checkout@v4.2.2
+            - name: Setup NodeJS
+              uses: actions/setup-node@v4
+              with:
+                node-version: '22.11.0'
+            - name: Install dependencies
+              run: npm ci
+            - name: Build
+              run: npm build
+            - name: Test
+              run: npm test  
+                
+
+
+
+
   
