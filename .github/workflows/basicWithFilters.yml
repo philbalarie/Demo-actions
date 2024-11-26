@@ -4,7 +4,20 @@ on:
   pull_request: 
     types: 
       - opened
-  workflow_dispatch:     
+    branches: 
+      - main
+  workflow_dispatch:
+    # Only push to the main branch or start whth dev will trigger this workflow
+  push: 
+    branches: 
+      # - main
+      # Any character other than slash
+      - 'dev-*'
+      # Double asterix allow other slashs
+      - 'feat/**'
+    paths-ignore: 
+      - '**/README.md'
+      - '.github/workflows/*'
 jobs: 
     deploy: 
         runs-on: ubuntu-latest
