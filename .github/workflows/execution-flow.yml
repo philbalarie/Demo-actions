@@ -4,6 +4,11 @@ on:
     branches: main
 
 jobs:
+  lint: 
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Lint code
+        run: echo "Simulate linting..."
   test:
     runs-on: ubuntu-latest
     steps:
@@ -19,6 +24,7 @@ jobs:
       - name: Test code
         run: npm run test
   build:
+    if: always()
     needs: test
     runs-on: ubuntu-latest
     steps:
