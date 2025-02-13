@@ -46,7 +46,7 @@ jobs:
           path: build
   deploy:
     needs: build
-    if: always() && needs.build.outputs == 'success'
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Debug
