@@ -1,6 +1,8 @@
 name: Deploy with multiple jobs
 on:
   workflow_dispatch:
+env: 
+  MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME }}
 
 jobs: 
     test: 
