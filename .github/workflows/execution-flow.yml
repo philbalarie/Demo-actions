@@ -51,7 +51,6 @@ jobs:
     steps:
       - name: Debug
         run: echo "${{ needs.build.outputs }}"
-    steps:
       - name: Get build artifacts
         uses: actions/download-artifact@v4.1.8
         with:
