@@ -45,8 +45,8 @@ jobs:
           name: build-files
           path: build
   deploy:
-    needs: build
-    if: needs.build.result == 'success'
+    needs: [test, build]
+    if: always() && needs.test.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Get build artifacts
