@@ -1,6 +1,7 @@
 name: Execute Worlflow
 on:
-  workflow_dispatch:
+  push:
+    branches: main
 
 jobs:
   test:
@@ -49,3 +50,13 @@ jobs:
         run: ls
       - name: Deploy
         run: echo "Deploying..."
+  # Execute only if failed job
+  report: 
+    needs: [test, build, deploy]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Output infos
+        run: |
+          echo "Something went wrong"
+          echo "${{ github }}"
