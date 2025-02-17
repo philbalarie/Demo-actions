@@ -1,0 +1,22 @@
+name: Deployment Docker Container
+on: workflow_dispatch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: testing
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v4.2.2
+      - name: Cache dependencies
+        uses: actions/cache@v4.2.0
+        with:
+          path: ~/.npm
+          key: ${{ env.CACHE_KEY }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+    deploy: 
+      runs-on: ubuntu-latest
+      steps: 
+        - name: Output infos
+          run: echo "Deploying..."

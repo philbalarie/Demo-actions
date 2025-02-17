@@ -1,0 +1,33 @@
+# Matrix are like action variable
+name: Matrix Workflow
+on:
+  workflow_dispatch: 
+
+jobs:
+  build:
+    # In case of failure of builds
+    continue-on-error: true
+    strategy:
+      matrix:
+        node-version: [14, 16]
+        operation-system: [ubuntu-latest, windows-latest]
+        # Reserved key. Add standalone cobination
+        include:
+          - node-version: 18
+            operation-system: ubuntu-latest
+        exclude:
+          - node-version: 12
+            operation-system: windows-latest
+    # Runs one time per value. WIll run in parallel
+    runs-on: ${{ matrix.operation-system }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4.2.2
+      - name: Install Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm ci
+      - name: build
+        run: npm run build

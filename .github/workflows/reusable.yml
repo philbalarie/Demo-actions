@@ -1,0 +1,24 @@
+name: Reusable Deploy
+# Allow to be called from other workflows
+on: 
+    workflow_call:
+        inputs: 
+            artifact-name: 
+                description: The name of the artifact
+                required: true
+                type: string
+        outputs:
+            result: 
+                description: The result of the deployment
+                value: ${{ jobs.deploy.outputs.outcome }} 
+jobs:
+    deploy:
+        outputs: 
+            outcome: ${{ steps.set-result.outputs.step-result }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Output information
+              run: echo "${{ inputs.artifact-name }}"
+            - name: Set result output
+              id: set-result
+              run: echo "step-result=success >> $GITHUB_OUTPUT"

@@ -1,12 +1,11 @@
 name: Execute Worlflow
 on:
-  push:
-    branches: main
+  workflow_dispatch:
 
 jobs:
-  lint: 
+  lint:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - name: Lint code
         run: echo "Simulate linting..."
   test:
@@ -14,13 +13,9 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4.2.2
-      - name: Cache dependencies
-        uses: actions/cache@v4.2.0
-        with:
-          path: ~/.npm
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        run: npm ci
+      - name: Load & cache dependencies
+        # Custom action
+        uses: ./.github/actions/cached-deps
       - name: Test code
         run: npm run test
   build:
@@ -30,13 +25,9 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4.2.2
-      - name: Cache dependencies
-        uses: actions/cache@v4.2.0
-        with:
-          path: ~/.npm
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        run: npm ci
+      - name: Load & cache dependencies
+        # Custom action
+        uses: ./.github/actions/cached-deps
       - name: Build code
         run: npm run build
       - name: Upload artifacts
@@ -47,22 +38,32 @@ jobs:
   deploy:
     needs: [test, build]
     if: always() && needs.test.result == 'success'
+    # Reusable workflow
+    uses: ./.github\workflows\reusable.yml
+    with:
+      artifact-name: Artifact-name
+  print-deploy-result:
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Get build artifacts
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: build-files
-      - name: Output content
-        run: ls
-      - name: Deploy
-        run: echo "Deploying..."
+      - name: Print Deploy result
+        # echo output of deploy reusable workflow
+        run: echo "${{ needs.deploy.outputs.result }}"
+    # steps:
+    #   - name: Get build artifacts
+    #     uses: actions/download-artifact@v4.1.8
+    #     with:
+    #       name: build-files
+    #   - name: Output content
+    #     run: ls
+    #   - name: Deploy
+    #     run: echo "Deploying..."
   # Execute only if failed job
-  report: 
+  report:
     needs: [test, build, deploy]
     if: failure()
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - name: Output infos
         run: |
           echo "Something went wrong"
